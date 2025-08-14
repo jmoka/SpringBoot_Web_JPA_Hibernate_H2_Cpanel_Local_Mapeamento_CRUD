@@ -24,5 +24,7 @@ public class TesteConfig implements CommandLineRunner {
         // Aqui chamamos o método responsável por popular o banco de dados com usuários fictícios
         testeInicializar.insertUserAuto();
         testeInicializar.insertOrderAuto();
+        testeInicializar.insertCategory();
+        
     }
 }

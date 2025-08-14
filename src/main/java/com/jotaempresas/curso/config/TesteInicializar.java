@@ -6,9 +6,11 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jotaempresas.curso.entity.Category;
 import com.jotaempresas.curso.entity.Order;
 import com.jotaempresas.curso.entity.User;
 import com.jotaempresas.curso.entity.enums.OrderStatus;
+import com.jotaempresas.curso.repositories.CategoryRepository;
 import com.jotaempresas.curso.repositories.OrderRepository;
 import com.jotaempresas.curso.repositories.UserRepository;
 
@@ -21,7 +23,12 @@ public class TesteInicializar {
     @Autowired
     private UserRepository userRepository;
     
-    @Autowired OrderRepository OrderRepository;
+    @Autowired 
+    private OrderRepository orderRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
     
     // Criamos dois objetos User com dados fictícios para popular o banco de dados
     // O 'null' é usado no ID pois o banco de dados (através do JPA) irá gerar automaticamente o ID    
@@ -43,6 +50,16 @@ public class TesteInicializar {
     	Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), u2, OrderStatus.DELIVERED );
     	Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), u1, OrderStatus.WAITING_PAYMENT );
     	
-    	OrderRepository.saveAll(Arrays.asList(o1,o2,o3));
+    	orderRepository.saveAll(Arrays.asList(o1,o2,o3));
+    }
+    
+    public void insertCategory() {
+    	
+    	Category c1 = new Category(null, "Sala");
+    	Category c2 = new Category(null, "Cozinha");
+    	Category c3 = new Category(null, "Banheiro");
+    	Category c4 = new Category(null, "Cama");    	
+    	categoryRepository.saveAll(Arrays.asList(c1,c2,c3,c4));  	
+    	    	    	
     }
 }
