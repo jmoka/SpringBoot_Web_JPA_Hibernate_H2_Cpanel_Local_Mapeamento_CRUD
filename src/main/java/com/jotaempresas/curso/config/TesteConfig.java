@@ -25,6 +25,6 @@ public class TesteConfig implements CommandLineRunner {
         testeInicializar.insertUserAuto();
         testeInicializar.insertOrderAuto();
         testeInicializar.insertCategory();
-        
+        testeInicializar.insertProduct();
     }
 }

@@ -3,8 +3,6 @@ package com.jotaempresas.curso.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.hibernate.annotations.ManyToAny;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +31,7 @@ public class Product implements Serializable {
 
 	// ASSOCIAÇOES
 	@ManyToOne
-	@JoinColumn(name= "Key_Product_Id")
+	@JoinColumn(name= "Key_Category_Id")
 	private Category category;
 
 	// CONSTRUTORES
@@ -41,13 +39,14 @@ public class Product implements Serializable {
 
 	}
 
-	public Product(Long id, String name, String desciption, Double price, String imgUrl) {
+	public Product(Long id, String name, String desciption, Double price, String imgUrl, Category category) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.desciption = desciption;
 		this.price = price;
 		this.imgUrl = imgUrl;
+		this.category = category;
 	}
 
 	public Long getId() {
@@ -88,6 +87,14 @@ public class Product implements Serializable {
 
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
+	}
+	
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	@Override
