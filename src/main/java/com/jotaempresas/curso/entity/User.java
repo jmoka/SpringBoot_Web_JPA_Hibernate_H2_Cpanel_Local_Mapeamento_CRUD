@@ -1,42 +1,51 @@
 package com.jotaempresas.curso.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-
 @Entity
-@Table(name="tb_user") // usar sempre tb_ para não dar conflito
-public class User implements Serializable{
+@Table(name = "tb_user") // usar sempre tb_ para não dar conflito
+public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	// 1) Atributops Básicos
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="ID_USER")
+	@Column(name = "ID")
 	private Long id;
-	@Column(name="NOME_USER")
+	@Column(name = "NOME")
 	private String name;
-	@Column(name="EMAIL_USER")
+	@Column(name = "EMAIL")
 	private String email;
-	@Column(name="PHONE_USER")
+	@Column(name = "PHONE")
 	private String phone;
-	@Column(name="PASSWORD_USER")
+	@Column(name = "PASSWORD")
 	private String password;
-	
+
 	// Associações
 	
-	
+	// todas as coleções devem ser instanciada
+	// PARA CADA CLIENTE OU USUARIO EXIETE VARIAS ORDENS
+
+	@OneToMany(mappedBy = "user") // anotação informando que e uma chave estrangeira de order onde existe um usee para varias ordens e esta mapedo em order com nome cliente 
+	@JsonIgnore
+	private List<Order> orders = new ArrayList<>(); // obs: somente deve ser feito o get , nunca o set pois a lista nunca sera trocada
+
 	// Construtor
 	public User() {
-		
+
 	}
 
 	// Construtor com Argumentos
@@ -88,10 +97,14 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public List<Order> getOrders() {
+		return orders;
+	}
 
-	
+
 	// hashCode e equals
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -109,17 +122,12 @@ public class User implements Serializable{
 		return Objects.equals(id, other.id);
 	}
 
-	
-	 // To String
+	// To String
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", phone=" + phone + ", password=" + password
 				+ "]";
 	}
-	
-	
-	
-	
-	
+
 
 }

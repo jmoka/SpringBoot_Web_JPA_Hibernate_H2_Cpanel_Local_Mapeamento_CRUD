@@ -23,5 +23,6 @@ public class TesteConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Aqui chamamos o método responsável por popular o banco de dados com usuários fictícios
         testeInicializar.insertUserAuto();
+        testeInicializar.insertOrderAuto();
     }
 }

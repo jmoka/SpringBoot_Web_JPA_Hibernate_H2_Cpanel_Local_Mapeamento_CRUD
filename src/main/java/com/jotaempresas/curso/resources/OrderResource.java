@@ -12,33 +12,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.jotaempresas.curso.entity.User;
-import com.jotaempresas.curso.service.UserService;
+import com.jotaempresas.curso.entity.Order;
+import com.jotaempresas.curso.service.OrderService;
+
 
 // @RestController  = anotações que informam que essa classe e um recurso web controlado por um controlador rest
-// @RequestMapping(value= "/User") =  nome do caminho
+// @RequestMapping(value= "/Order") =  nome do caminho
 
 @RestController
-@RequestMapping(value = "/users")
-public class UserResource {
+@RequestMapping(value = "/orders")
+public class OrderResource {
 
 	@Autowired
-	private UserService userService;
+	private OrderService orderService;
 
 	// GET /users
 	@GetMapping
-	public ResponseEntity<List<User>> findAll() {
-		List<User> list = userService.findAll();
+	public ResponseEntity<List<Order>> findAll() {
+		List<Order> list = orderService.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 
 	// GET /users/{id}
 	@GetMapping("/{id}")
-	public ResponseEntity<User> findById(@PathVariable Long id) {
-		User obj = userService.findById(id);
+	public ResponseEntity<Order> findById(@PathVariable Long id) {
+		Order obj = orderService.findById(id);
 
 		if (obj == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com ID: " + id);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order não encontrada com ID: " + id);
 		}
 
 		return ResponseEntity.ok(obj);
@@ -48,12 +49,12 @@ public class UserResource {
 	@DeleteMapping(value = "/deletar/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 
-		if (userService.findById(id) == null) {
+		if (orderService.findById(id) == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado para exclusão. ID: " + id);
 
 		}
 
-		userService.DeleteId(id); // nome do método no service em camelCase
+		orderService.DeleteId(id); // nome do método no service em camelCase
 		return ResponseEntity.ok().build();
 	}
 }
