@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jotaempresas.curso.entity.enums.OrderStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,10 +27,11 @@ public class Order implements Serializable{
 	private Long id;
 	@Column(name = "MOMENT")
 	private Instant moment;
+	@Column(name = "ORDER_STATUS")
+	private int orderStatus;
 	
 	
-	// Para cada order existe um cliente 
-	
+	// Para cada order existe um cliente 	
 	
 	@ManyToOne    // anotação onde informar que essa chave estranjeira de user, onde são muitas ordens para um user
 	@JoinColumn(name= "Key_User_Id") // nome da chave estranjeira no banco
@@ -41,10 +42,11 @@ public class Order implements Serializable{
 		
 	}
 
-	public Order(Long id, Instant moment, User user) {
+	public Order(Long id, Instant moment, User user, OrderStatus orderStatus) {
 		this.id = id;
 		this.moment = moment;
 		this.user = user;
+		setOrderStatus(orderStatus);
 	}
 
 	public Long getId() {
@@ -70,6 +72,19 @@ public class Order implements Serializable{
 	public void setCliente(User user) {
 		this.user = user;
 	}
+	
+	
+
+	public OrderStatus getOrderStatus() {
+		return OrderStatus.enumOrder(orderStatus);
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		if(orderStatus !=null) {
+			this.orderStatus = orderStatus.getCode();			
+		}
+		
+	}
 
 	@Override
 	public int hashCode() {
@@ -90,8 +105,10 @@ public class Order implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", moment=" + moment + ", cliente=" + user + "]";
+		return "Order [id=" + id + ", moment=" + moment + ", orderStatus=" + orderStatus + ", user=" + user + "]";
 	}
+
+	
 	
 	
 	
