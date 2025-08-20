@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 
 import com.jotaempresas.curso.entity.Category;
 import com.jotaempresas.curso.entity.Order;
+import com.jotaempresas.curso.entity.OrderItem;
 import com.jotaempresas.curso.entity.Product;
 import com.jotaempresas.curso.entity.User;
 import com.jotaempresas.curso.entity.enums.OrderStatus;
 import com.jotaempresas.curso.repositories.CategoryRepository;
+import com.jotaempresas.curso.repositories.OrderItemRepository;
 import com.jotaempresas.curso.repositories.OrderRepository;
 import com.jotaempresas.curso.repositories.ProductRepository;
 import com.jotaempresas.curso.repositories.UserRepository;
@@ -31,6 +33,8 @@ public class TesteInicializar {
 	private CategoryRepository categoryRepository;
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 
 	// Criamos dois objetos User com dados fictícios para popular o banco de dados
 	// O 'null' é usado no ID pois o banco de dados (através do JPA) irá gerar
@@ -63,6 +67,13 @@ public class TesteInicializar {
 	Product p5 = new Product(null, "Cadeira Gamer ThunderX3", "Reclinável, apoio de braço 4D", 1200.00,
 			"https://exemplo.com/imagens/cadeira-gamer.jpg", c1);
 	
+	// ITENS DO PEDIDO
+	OrderItem oi1 = new OrderItem(o1, p1, 2, p1.getPrice());
+	OrderItem oi2 = new OrderItem(o1, p3, 1, p3.getPrice());
+	OrderItem oi3 = new OrderItem(o2, p3, 2, p3.getPrice());
+	OrderItem oi4 = new OrderItem(o3, p5, 2, p5.getPrice());
+	
+	
 
 	public void insertUserAuto() {
 		userRepository.saveAll(Arrays.asList(u1, u2));
@@ -78,5 +89,9 @@ public class TesteInicializar {
 
 	public void insertProduct() {
 		productRepository.saveAll(Arrays.asList(p1,p2,p3,p4,p5));
+	}
+	
+	public void insertOrderItens() {
+		orderItemRepository.saveAll(Arrays.asList(oi1, oi2,oi3,oi4));
 	}
 }

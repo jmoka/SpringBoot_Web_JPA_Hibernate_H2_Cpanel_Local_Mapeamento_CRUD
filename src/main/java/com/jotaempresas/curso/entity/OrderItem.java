@@ -32,13 +32,15 @@ public class OrderItem implements Serializable{
 
 	public OrderItem(Order order, Product product, Integer quantity, Double price) { // aqui no construtor precisamos incluir o produto e o pedido
 		super();
+		this.Key_Order_Product = new OrderItemPK(); // inicialização obrigatória
 		Key_Order_Product.setOrder(order);
 		Key_Order_Product.setProduct(product);
 		this.quantity = quantity;
 		this.price = price;
 	}
+		
 	
-	
+
 	public Order getOrder() {
 		return Key_Order_Product.getOrder();
 	}
@@ -46,6 +48,7 @@ public class OrderItem implements Serializable{
 	public void setOrder(Order order) {
 		Key_Order_Product.setOrder(order);
 	}
+	
 	
 	public Product getProduct() {
 		return Key_Order_Product.getProduct();

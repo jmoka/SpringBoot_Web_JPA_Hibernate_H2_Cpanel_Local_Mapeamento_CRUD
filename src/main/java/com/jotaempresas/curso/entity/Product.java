@@ -1,7 +1,11 @@
 package com.jotaempresas.curso.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,6 +38,10 @@ public class Product implements Serializable {
 	@ManyToOne
 	@JoinColumn(name= "Key_Category_Id")
 	private Category category;
+	
+	// associação com os OrdemItem
+	@OneToMany(mappedBy = "Key_Order_Product.product")	
+	private Set<OrderItem> itens = new HashSet<>();
 
 	// CONSTRUTORES
 	public Product() {
@@ -48,6 +57,20 @@ public class Product implements Serializable {
 		this.imgUrl = imgUrl;
 		this.category = category;
 	}
+	
+		
+	@JsonIgnore
+	public Set<Order> getOrders() {
+		// crio uma coleção de Order pedidos
+		Set<Order> set = new HashSet<>();
+		
+		for (OrderItem i : itens) { // varre a lista de itens e para cada item 
+			set.add(i.getOrder()); // adciono em cada ordem
+		}
+		return set;
+	}
+
+
 
 	public Long getId() {
 		return id;

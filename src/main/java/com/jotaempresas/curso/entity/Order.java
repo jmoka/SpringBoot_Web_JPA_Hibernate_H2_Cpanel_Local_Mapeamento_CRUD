@@ -2,8 +2,11 @@ package com.jotaempresas.curso.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jotaempresas.curso.entity.enums.OrderStatus;
 
 import jakarta.persistence.Column;
@@ -13,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -38,6 +42,20 @@ public class Order implements Serializable{
 	private User user; 
 	
 	
+	// associação com os OrdemItem
+	@OneToMany(mappedBy = "Key_Order_Product.order")
+	@JsonIgnore
+	private Set<OrderItem> itens = new HashSet<>();
+	
+	
+	public Set<OrderItem> getItens() {
+		return itens;
+	}
+
+	public void setItens(Set<OrderItem> itens) {
+		this.itens = itens;
+	}
+
 	public Order() {
 		
 	}
