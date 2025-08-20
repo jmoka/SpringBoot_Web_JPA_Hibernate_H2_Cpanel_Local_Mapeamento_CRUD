@@ -9,6 +9,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jotaempresas.curso.entity.enums.OrderStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 
@@ -48,6 +50,18 @@ public class Order implements Serializable{
 	private Set<OrderItem> itens = new HashSet<>();
 	
 	
+	// associação com pagamento
+	/* 
+	 *  ( mapeamento de um para um como mesmo ID)
+	  Essa anotação é obrigatória na classe pai em relação um para um , para que tenha o registro do mesmo id
+	  ou seja quando o registro do pedido for 4 o nesmo codigo será no pagamento	
+	*/
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL) 
+	@JsonIgnore
+	private Payment payment;
+	
+	
+
 	public Set<OrderItem> getItens() {
 		return itens;
 	}
@@ -103,6 +117,15 @@ public class Order implements Serializable{
 			this.orderStatus = orderStatus.getCode();			
 		}
 		
+	}
+
+	
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
 	}
 
 	@Override
