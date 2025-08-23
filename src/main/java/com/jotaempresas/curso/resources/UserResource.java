@@ -1,6 +1,7 @@
 package com.jotaempresas.curso.resources;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,7 +46,18 @@ public class UserResource {
 
 		return ResponseEntity.ok(obj);
 	}
+	
+	@GetMapping("/email/{email}") // Evitar conflito com GET /users/{id}
+	public ResponseEntity<User> findByEmail(@PathVariable String email) {
+	    Optional<User> obj = userService.findByEmail(email);
 
+	    if (obj.isEmpty()) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com Email: " + email);
+	    }
+
+	    return ResponseEntity.ok(obj.get());
+	}
+	
 	// DELETE /users/deletar/{id}
 	@DeleteMapping(value = "/deletar/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -56,4 +70,31 @@ public class UserResource {
 		userService.DeleteId(id); // nome do método no service em camelCase
 		return ResponseEntity.ok().build();
 	}
+
+	// INSERIR USUARIO
+	@PostMapping("/insert")
+	public ResponseEntity<User> insert(@RequestBody User user) {
+		
+	    // 1) Verificação de dados inválidos
+	    if (user.getName() == null || user.getEmail() == null || user.getPassword() == null) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome, email e senha são obrigatórios.");
+	    }
+
+	    // 2) Verificação de conflito (email já existente)
+	    Optional<User> existingUser = userService.findByEmail(user.getEmail());
+	    if (existingUser.isPresent()) {
+	        throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um usuário com este email: " + user.getEmail());
+	    }
+
+	    try {
+	        // 3) Se tudo ok, salvar usuário
+	        User savedUser = userService.salverUser(user);
+	        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+	    } catch (Exception e) {
+	        // 4) Caso aconteça erro inesperado no servidor
+	        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro inesperado ao salvar usuário", e);
+	    }
+	}
+
+	
 }

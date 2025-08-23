@@ -37,6 +37,7 @@ public class TesteInicializar {
 	@Autowired
 	private OrderItemRepository orderItemRepository;
 	
+	
 
 	// Criamos dois objetos User com dados fictícios para popular o banco de dados
 	// O 'null' é usado no ID pois o banco de dados (através do JPA) irá gerar
@@ -59,7 +60,8 @@ public class TesteInicializar {
 	 *
 	 * */
 	
-
+	//USUÁRIO
+	
 	
 	
 
@@ -90,9 +92,11 @@ public class TesteInicializar {
 	
 	
 	
+	
 
 	public void insertUserAuto() {
 		userRepository.saveAll(Arrays.asList(u1, u2));
+		
 	}
 
 	public void insertOrderAuto() {

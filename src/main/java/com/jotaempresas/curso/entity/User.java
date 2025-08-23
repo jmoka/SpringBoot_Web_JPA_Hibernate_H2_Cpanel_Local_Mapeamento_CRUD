@@ -122,13 +122,17 @@ public class User implements Serializable {
 		User other = (User) obj;
 		return Objects.equals(id, other.id);
 	}
-
 	// To String
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", phone=" + phone + ", password=" + password
-				+ "]";
+				+ ", orders=" + orders + "]";
 	}
+
+	
+
+
+	
 
 
 }
