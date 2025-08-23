@@ -21,12 +21,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
-
 @Entity
 @Table(name = "tb_order") // usar sempre tb_ para não dar conflito
-public class Order implements Serializable{
+public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
@@ -35,32 +34,27 @@ public class Order implements Serializable{
 	private Instant moment;
 	@Column(name = "ORDER_STATUS")
 	private int orderStatus;
-	
-	
-	// Para cada order existe um cliente 	
-	
-	@ManyToOne    // anotação onde informar que essa chave estranjeira de user, onde são muitas ordens para um user
-	@JoinColumn(name= "Key_User_Id") // nome da chave estranjeira no banco
-	private User user; 
-	
-	
+
+	// Para cada order existe um cliente
+
+	@ManyToOne // anotação onde informar que essa chave estranjeira de user, onde são muitas
+				// ordens para um user
+	@JoinColumn(name = "Key_User_Id") // nome da chave estranjeira no banco
+	private User user;
+
 	// associação com os OrdemItem
 	@OneToMany(mappedBy = "Key_Order_Product.order")
-	@JsonIgnore
 	private Set<OrderItem> itens = new HashSet<>();
-	
-	
+
 	// associação com pagamento
-	/* 
-	 *  ( mapeamento de um para um como mesmo ID)
-	  Essa anotação é obrigatória na classe pai em relação um para um , para que tenha o registro do mesmo id
-	  ou seja quando o registro do pedido for 4 o nesmo codigo será no pagamento	
-	*/
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL) 
+	/*
+	 * ( mapeamento de um para um como mesmo ID) Essa anotação é obrigatória na
+	 * classe pai em relação um para um , para que tenha o registro do mesmo id ou
+	 * seja quando o registro do pedido for 4 o nesmo codigo será no pagamento
+	 */
 	@JsonIgnore
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
-	
-	
 
 	public Set<OrderItem> getItens() {
 		return itens;
@@ -71,7 +65,7 @@ public class Order implements Serializable{
 	}
 
 	public Order() {
-		
+
 	}
 
 	public Order(Long id, Instant moment, User user, OrderStatus orderStatus) {
@@ -105,27 +99,33 @@ public class Order implements Serializable{
 	public void setCliente(User user) {
 		this.user = user;
 	}
-	
-	
 
 	public OrderStatus getOrderStatus() {
 		return OrderStatus.enumOrder(orderStatus);
 	}
 
 	public void setOrderStatus(OrderStatus orderStatus) {
-		if(orderStatus !=null) {
-			this.orderStatus = orderStatus.getCode();			
+		if (orderStatus != null) {
+			this.orderStatus = orderStatus.getCode();
 		}
-		
+
 	}
 
-	
 	public Payment getPayment() {
 		return payment;
 	}
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public Double getTotal() {
+		Double sum = 0.0;
+		for (OrderItem x : itens) {
+			sum += x.getSubtotal();
+		}
+
+		return sum;
 	}
 
 	@Override
@@ -150,8 +150,4 @@ public class Order implements Serializable{
 		return "Order [id=" + id + ", moment=" + moment + ", orderStatus=" + orderStatus + ", user=" + user + "]";
 	}
 
-	
-	
-	
-	
 }
