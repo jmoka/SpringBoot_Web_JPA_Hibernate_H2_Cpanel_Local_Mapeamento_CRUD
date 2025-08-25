@@ -14,104 +14,89 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.jotaempresas.curso.entity.User;
+import com.jotaempresas.curso.entity.execption.ResourceBadRequestException;
+import com.jotaempresas.curso.entity.execption.ResourceConflictException;
+import com.jotaempresas.curso.entity.execption.ResourceNotFoundException;
 import com.jotaempresas.curso.service.UserService;
-
-// @RestController  = anotações que informam que essa classe e um recurso web controlado por um controlador rest
-// @RequestMapping(value= "/User") =  nome do caminho
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	// GET /users
-	@GetMapping
-	public ResponseEntity<List<User>> findAll() {
-		List<User> list = userService.findAll();
-		return ResponseEntity.ok().body(list);
-	}
+    // GET /users
+    @GetMapping
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.ok().body(userService.findAll());
+    }
 
-	// GET /users/{id}
-	@GetMapping("/{id}")
-	public ResponseEntity<User> findById(@PathVariable Long id) {
-		User obj = userService.findById(id);
+    // GET /users/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findById(@PathVariable Long id) {
+        User obj = userService.findById(id);
+        String msg = "Usuário com ID não encontrado";
+        if (obj == null) {
+            throw new ResourceNotFoundException(msg, id);
+        }
+        return ResponseEntity.ok(obj);
+    }
 
-		if (obj == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com ID: " + id);
-		}
+    // GET /users/email/{email}
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> findByEmail(@PathVariable String email) {
+        Optional<User> obj = userService.findByEmail(email);
+        if (obj.isEmpty()) {
+        	String msg = "Usuário com Email não encontrado";
+            throw new ResourceNotFoundException(msg, obj);
+        }
+        return ResponseEntity.ok(obj.get());
+    }
 
-		return ResponseEntity.ok(obj);
-	}
-	
-	@GetMapping("/email/{email}") // Evitar conflito com GET /users/{id}
-	public ResponseEntity<User> findByEmail(@PathVariable String email) {
-	    Optional<User> obj = userService.findByEmail(email);
+    // DELETE /users/deletar/{id}
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    	
+        User obj = userService.findById(id); // busca o user por ai
+        
+        if (obj == null) {
+        	// chama a excessão personalizada passando o text e o id
+        	String msg = "Usuário não encontrado com Id: ";
+            throw new ResourceNotFoundException(msg , id); // class criada para retornar codigo 404
+        }
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
 
-	    if (obj.isEmpty()) {
-	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado com Email: " + email);
-	    }
+    // POST /users/insert
+    @PostMapping("/insert")
+    public ResponseEntity<User> insert(@RequestBody User user) {
+        if (user.getName() == null || user.getEmail() == null || user.getPassword() == null) {
+        	String msg = "Obrigatório Nome, Email e Senha";
+            throw new ResourceBadRequestException(msg);
+        }
 
-	    return ResponseEntity.ok(obj.get());
-	}
-	
-	// DELETE /users/deletar/{id}
-	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Optional<User> existingUser = userService.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+        	String msg = "Já existe usuário com este email: ";
+            throw new ResourceConflictException(msg + user.getEmail());
+        }
 
-		if (userService.findById(id) == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado para exclusão. ID: " + id);
+        User savedUser = userService.salverUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
 
-		}
-
-		userService.DeleteId(id); // nome do método no service em camelCase
-		return ResponseEntity.ok().build();
-	}
-
-	// INSERIR USUARIO
-	@PostMapping("/insert")
-	public ResponseEntity<User> insert(@RequestBody User user) {
-		
-	    // 1) Verificação de dados inválidos
-	    if (user.getName() == null || user.getEmail() == null || user.getPassword() == null) {
-	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome, email e senha são obrigatórios.");
-	    }
-
-	    // 2) Verificação de conflito (email já existente)
-	    Optional<User> existingUser = userService.findByEmail(user.getEmail());
-	    if (existingUser.isPresent()) {
-	        throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um usuário com este email: " + user.getEmail());
-	    }
-
-	    try {
-	        // 3) Se tudo ok, salvar usuário
-	        User savedUser = userService.salverUser(user);
-	        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
-	    } catch (Exception e) {
-	        // 4) Caso aconteça erro inesperado no servidor
-	        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro inesperado ao salvar usuário", e);
-	    }
-	}
-
-	// UPDATE USER
-	@PutMapping("/updateUser/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
-	    try {
-	        User updatedUser = userService.updateDataUser(id, user);
-	        if(updatedUser != null) {	
-	        	
-	        	return ResponseEntity.ok(updatedUser); // 200 OK
-	        } else {
-	            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build(); // 304 NOT_MODIFIED
-	        }
-	    } catch (Exception e) {
-	        throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Usuário não modificado", e);
-	    }
-	}
-
-	
+    // PUT /users/updateUser/{id}
+    @PutMapping("/updateUser/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        User updatedUser = userService.updateDataUser(id, user);
+        if (updatedUser == null) {
+        	String msg = "Usuário não encontrado com ID : ";
+            throw new ResourceNotFoundException(msg, id);
+        }
+        return ResponseEntity.ok(updatedUser);
+    }
 }
