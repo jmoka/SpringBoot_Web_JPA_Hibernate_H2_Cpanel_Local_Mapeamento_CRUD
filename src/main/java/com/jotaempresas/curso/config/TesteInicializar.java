@@ -44,7 +44,7 @@ public class TesteInicializar {
 	// automaticamente o ID
 
 	// USUARIOS
-	User u1 = new User(null, "Maria Brown II", "maria@gmail.com", "988888888", "123457");
+	User u1 = new User(null, "Maria Brown xxx", "mariaxxxxx@gmail.com", "55555555555", "123457");
 	User u2 = new User(null, "Alex Green", "alex@gmail.com", "977777777", "123456");
 
 	// ORDENS
@@ -59,8 +59,6 @@ public class TesteInicializar {
 	 * não de chama o repository e sim inseri o pagemnto direto no no pagemnto
 	 *
 	 * */
-	
-	//USUÁRIO
 	
 	
 	
@@ -115,6 +113,10 @@ public class TesteInicializar {
 	public void insertOrderItens() {
 	
 		orderItemRepository.saveAll(Arrays.asList(oi1, oi2,oi3,oi4));
+	}
+	
+	public void atualizar() {
+		userRepository.save(u1);
 	}
 	
 	

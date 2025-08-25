@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -93,6 +94,22 @@ public class UserResource {
 	    } catch (Exception e) {
 	        // 4) Caso aconteça erro inesperado no servidor
 	        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro inesperado ao salvar usuário", e);
+	    }
+	}
+
+	// UPDATE USER
+	@PutMapping("/updateUser/{id}")
+	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
+	    try {
+	        User updatedUser = userService.updateDataUser(id, user);
+	        if(updatedUser != null) {	
+	        	
+	        	return ResponseEntity.ok(updatedUser); // 200 OK
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build(); // 304 NOT_MODIFIED
+	        }
+	    } catch (Exception e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Usuário não modificado", e);
 	    }
 	}
 

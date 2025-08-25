@@ -24,13 +24,12 @@ public class UserService {
 	public User findById(Long id) {
 		return userRepository.findById(id).orElse(null);
 	}
-	
+
 	// USUARIO POR Email
 	public Optional<User> findByEmail(String email) {
-	    return userRepository.findByEmail(email);
+		return userRepository.findByEmail(email);
 	}
-	
-	
+
 	// DELETAR USUARIO AI
 	public void DeleteId(Long id) {
 		userRepository.deleteById(id);
@@ -39,6 +38,28 @@ public class UserService {
 	// INSERIR USUARIO
 	public User salverUser(User user) {
 		return userRepository.save(user);
+	}
+
+	// ATUALIZAR USUÁRIOS
+	public User updateDataUser(Long id, User user) {
+		
+		// buscar usuario
+		String nome = user.getName();
+		String email = user.getEmail();
+		String fone = user.getPhone();
+		Optional<User> existUser = userRepository.findById(id); // vai instanciar um usuário porém ainda não vai no banco de dados ele primeiro salva e depois que estiver saldo que damos outro tratamento
+		if(existUser.isPresent()) {
+			User newUser = existUser.get();
+			newUser.setName(nome);
+			newUser.setEmail(email);
+			newUser.setPhone(fone);		
+			userRepository.save(newUser);
+			return newUser;
+			
+		}
+		
+		
+		return null;
 	}
 
 }
