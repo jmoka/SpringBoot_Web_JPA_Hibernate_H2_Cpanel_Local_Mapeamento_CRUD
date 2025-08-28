@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 
 // @Profile("test") indica que essa configuração só será ativada quando o profile 'test' estiver ativo
 // Dessa forma, esse código só será executado em ambiente de teste (ex: H2 Database em memória)
-@Profile("local")
+@Profile("cpanel")
 public class TesteConfig implements CommandLineRunner {
 
     // Injeção de dependência da classe TesteInicializar, que contém a lógica de inserção de dados
