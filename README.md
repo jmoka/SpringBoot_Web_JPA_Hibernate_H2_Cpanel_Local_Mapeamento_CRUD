@@ -18,7 +18,253 @@ Desenvolvida com **Spring Boot**, **JPA/Hibernate** e **MySQL**, seguindo boas p
 
 ---
 
-## 📂 Estrutura do Projeto
+## 📦 Dependências Principais
+
+Para utilizar o JPA/Hibernate e os bancos de dados, as seguintes dependências são necessárias no `pom.xml`:
+
+### Spring Data JPA
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+Fornece todas as funcionalidades do JPA/Hibernate, incluindo:
+
+- Mapeamento objeto-relacional (ORM)
+- Gerenciamento de entidades
+- Repositórios e consultas
+- Transações
+
+### MySQL Connector
+
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+```
+
+Driver JDBC para conexão com MySQL:
+
+- Necessário para ambientes `local` e `cpanel`
+- Suporte a todas as funcionalidades do MySQL 8+
+
+### MariaDB Driver
+
+```xml
+<dependency>
+    <groupId>org.mariadb.jdbc</groupId>
+    <artifactId>mariadb-java-client</artifactId>
+    <version>3.5.5</version>
+</dependency>
+```
+
+Driver alternativo compatível com MySQL:
+
+- Suporte adicional para MariaDB
+- Melhor performance em alguns casos
+
+O H2 Database já está incluído no `spring-boot-starter-test`.
+
+---
+
+## ⚙️ Configurações por Perfil
+
+### Perfil Local (`application-local.properties`)
+
+```properties
+# Conexão MySQL Local
+spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco
+spring.datasource.username=root
+spring.datasource.password=sua_senha
+
+# Configurações JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=true
+```
+
+- `ddl-auto=update`: Atualiza o schema automaticamente
+- `show-sql=true`: Mostra SQL no console
+- Ideal para desenvolvimento
+
+### Perfil de Testes (`application-test.properties`)
+
+```properties
+# Banco H2 em memória
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.h2.console.enabled=true
+
+# Configurações JPA
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.defer-datasource-initialization=true
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+- Banco H2 em memória para testes rápidos
+- Console web disponível em `/h2-console`
+- SQL formatado para melhor leitura
+
+### Perfil cPanel (`application-cpanel.properties`)
+
+```properties
+# Conexão MySQL Remota
+spring.datasource.url=jdbc:mysql://seu_host:3306/seu_banco
+spring.datasource.username=usuario_cpanel
+spring.datasource.password=senha_cpanel
+
+# Configurações JPA
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=true
+```
+
+- Configurado para MySQL em produção
+- Dialect específico para MySQL
+- Logs SQL habilitados para monitoramento
+
+### Configurações Globais (`application.properties`)
+
+```properties
+# Configurações JPA comuns
+spring.jpa.open-in-view=true
+spring.jpa.show-sql=true
+```
+
+Aplicadas a todos os perfis, podem ser sobrescritas.
+
+---
+
+## � Dependências Principais
+
+Para utilizar o JPA/Hibernate e os bancos de dados, as seguintes dependências são necessárias no `pom.xml`:
+
+### Spring Data JPA
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+Fornece todas as funcionalidades do JPA/Hibernate, incluindo:
+
+- Mapeamento objeto-relacional (ORM)
+- Gerenciamento de entidades
+- Repositórios e consultas
+- Transações
+
+### MySQL Connector
+
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+```
+
+Driver JDBC para conexão com MySQL:
+
+- Necessário para ambientes `local` e `cpanel`
+- Suporte a todas as funcionalidades do MySQL 8+
+
+### MariaDB Driver
+
+```xml
+<dependency>
+    <groupId>org.mariadb.jdbc</groupId>
+    <artifactId>mariadb-java-client</artifactId>
+    <version>3.5.5</version>
+</dependency>
+```
+
+Driver alternativo compatível com MySQL:
+
+- Suporte adicional para MariaDB
+- Melhor performance em alguns casos
+
+O H2 Database já está incluído no `spring-boot-starter-test`.
+
+---
+
+## ⚙️ Configurações por Perfil
+
+### Perfil Local (`application-local.properties`)
+
+```properties
+# Conexão MySQL Local
+spring.datasource.url=jdbc:mysql://localhost:3306/seu_banco
+spring.datasource.username=root
+spring.datasource.password=sua_senha
+
+# Configurações JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=true
+```
+
+- `ddl-auto=update`: Atualiza o schema automaticamente
+- `show-sql=true`: Mostra SQL no console
+- Ideal para desenvolvimento
+
+### Perfil de Testes (`application-test.properties`)
+
+```properties
+# Banco H2 em memória
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.h2.console.enabled=true
+
+# Configurações JPA
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.defer-datasource-initialization=true
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+- Banco H2 em memória para testes rápidos
+- Console web disponível em `/h2-console`
+- SQL formatado para melhor leitura
+
+### Perfil cPanel (`application-cpanel.properties`)
+
+```properties
+# Conexão MySQL Remota
+spring.datasource.url=jdbc:mysql://seu_host:3306/seu_banco
+spring.datasource.username=usuario_cpanel
+spring.datasource.password=senha_cpanel
+
+# Configurações JPA
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=true
+```
+
+- Configurado para MySQL em produção
+- Dialect específico para MySQL
+- Logs SQL habilitados para monitoramento
+
+### Configurações Globais (`application.properties`)
+
+```properties
+# Configurações JPA comuns
+spring.jpa.open-in-view=true
+spring.jpa.show-sql=true
+```
+
+Aplicadas a todos os perfis, podem ser sobrescritas.
+
+---
+
+## �📂 Estrutura do Projeto
 
 ```
 src/main/java/com/jotaempresas/curso/
